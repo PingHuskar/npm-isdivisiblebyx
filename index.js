@@ -1,69 +1,42 @@
-const op = require('operation-strint');
+import {
+  ErrorValidsnum,
+  IsDivisibleBy2,
+  IsDivisibleBy3,
+  IsDivisibleBy4,
+  IsDivisibleBy5,
+  IsDivisibleBy7,
+  IsDivisibleBy10,
+} from "./src"
 
-const DEBUG = false;
-const snumpat = /^\d+$/;
-
-const ErrorValidsnum = (snum) => {
-  if (!snum) {
-    return `Numbers cannot be empty`;
+class IsDiv {
+  #num;
+  constructor(num) {
+    this.#num = num || "0";
   }
-  if (!snumpat.test(snum)) {
-    return `Numbers must be numbers`;
-  }
-  return false
-};
-
-const IsDivisibleBy2 = (snum) => {
-  if (ErrorValidsnum(snum)) return ErrorValidsnum(snum);
-  return /[02468]$/.test(snum);
-}
-
-const IsDivisibleBy3 = (snum) => {
-  if (ErrorValidsnum(snum)) return ErrorValidsnum(snum);
-  while (true) {
-    let remove0369 = snum.replace(/[0369]/g, ``);
-    if (remove0369.length == 0) return true;
-    if (remove0369.length == 1) return remove0369 == `0`;
-    snum = op.sum(
-      remove0369.split(``).slice(0, -1).join(""),
-      remove0369.split(``).at(-1)
-    );
-    if (/^[12]$/.test(snum)) {
-      return false;
+  set(num) {
+    if (typeof num === "object") {
+      console.error("Invalid type")
+      return this;
     }
+    try {
+      this.#num = `${num}`;
+    } catch (e) {
+      console.error(e)
+    }
+    return this;
   }
-};
 
-const IsDivisibleBy4 = (snum) => {
-  if (ErrorValidsnum(snum)) return ErrorValidsnum(snum);
-  if (snum.length <= 2) return parseInt(snum) % 4 === 0;
-  const snumArr = snum.split(``);
-  snum = snumArr.slice(snumArr.length - 2).join(``);
-  return parseInt(snum) % 4 === 0;
-};
-
-const IsDivisibleBy5 = (snum) => {
-  if (ErrorValidsnum(snum)) return ErrorValidsnum(snum);
-  return /[50]$/.test(snum);
+  get by2() { return IsDivisibleBy2(this.#num) }
+  get by3() { return IsDivisibleBy3(this.#num) }
+  get by4() { return IsDivisibleBy4(this.#num) }
+  get by5() { return IsDivisibleBy5(this.#num) }
+  get by7() { return IsDivisibleBy7(this.#num) }
+  get by10() { return IsDivisibleBy10(this.#num) }
 }
 
-const IsDivisibleBy7 = (snum) => {
-  if (ErrorValidsnum(snum)) return ErrorValidsnum(snum);
-  if (snum.length <= 2) return parseInt(snum) % 7 === 0;
-  const snumArr = snum.split(``);
-  const snumArr1 = snumArr.slice(0, snumArr.length-1).join(``);
-  const snumArr2 = snumArr.at(-1);
-  return IsDivisibleBy7(
-    snumArr2 == 0 ? snumArr1 : op.minus(snumArr1, op.multiply(snumArr2, "2"))
-  );
-};
+export default IsDiv
 
-const IsDivisibleBy10 = (snum) => {
-  if (ErrorValidsnum(snum)) return ErrorValidsnum(snum);
-  return /[0]$/.test(snum);
-};
-
-module.exports = {
+export {
   ErrorValidsnum,
   IsDivisibleBy2,
   IsDivisibleBy3,
